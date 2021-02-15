@@ -1,6 +1,6 @@
 ### 6_Penguin_HW #######################################
 ### Created by: Alyssa Cohen
-### Created on: 2021-10-08
+### Created on: 2021-02-10
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
 # Load Libraries
@@ -65,7 +65,8 @@ penguins %>% filter(sex == "Male" | sex == "Female") %>%
         plot.title = element_text(size=20)) +
   facet_grid(~island) + 
   labs(y="Body Mass (g)", x="Sex", 
-       title="Adelie Penguins Body Mass by Island") 
+       title="Adelie Penguins Body Mass by Island") + 
+  ggsave(here("Week_3","Output","Group_Plot_penguin.png"))
 
 # Extra that I did
 penguins2 <- penguins %>% 
@@ -101,7 +102,9 @@ penguins2 %>% filter(sex == "Male" | sex == "Female") %>%
                                          margin = margin(2, 0, 2, 0, 
                                                 unit = "pt")),
         legend.position="none", strip.placement = "outside",
-        plot.title = element_text(size=15, hjust = -2, face = "bold")) +
+        plot.title = element_text(size=15, hjust = -1, face = "bold")) +
   labs(y="", x="Sex", 
-       title="Adelie Penguins Body Mass by Island")
+       title="Adelie Penguins Body Mass by Island") +
+  ggsave(here("Week_3","Output","My_Plot_penguin.png"))
+
   
