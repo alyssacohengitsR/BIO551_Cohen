@@ -20,6 +20,8 @@ install.packages("palmerpenguins")
 library(palmerpenguins)
 library(tidyverse)
 library(here)
+library(ggplot2)
+library(ggthemes)
 
 # Load data --------------------------------------------
 glimpse(penguins)
@@ -32,6 +34,7 @@ penguins_body_mass <- penguins %>%
             var_body_mass = var(body_mass_g, na.rm = TRUE))
 
 # females, log(body_mass), select(species, island, sex, log body mass) and plot
+## plot as boxplot showing log(body mass) of females in each island
 penguins %>% 
   drop_na(sex) %>% 
   filter(sex == "female") %>% 
@@ -48,8 +51,7 @@ penguins %>%
     labs(y="log Body Mass (g)", x="Island", 
          title="Female Penguins by Island")
 
-    ggsave(here("Week_4","Output","Group_Plot_penguin.png"))
-
+## plot as boxplot showing log(body mass) of females in each island by species
 penguins %>% 
   drop_na(sex) %>% 
   filter(sex == "female") %>% 
@@ -57,12 +59,12 @@ penguins %>%
   select(species, island, sex, log_bodymass) %>% 
   ggplot(aes(x=island, y=log_bodymass, fill=sex)) +
   geom_boxplot() +
-  geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme_bw() +
   theme(strip.background = element_rect(fill = "white", color = "white"),
         strip.text = element_text(face="bold", size=10), 
         legend.position="none", plot.title = element_text(face = "bold")) +
-  facet_grid(species~., scale="free_y") + 
+  facet_grid(species~.) + 
   labs(y="log Body Mass (g)", x="Island", 
-       title = "Female Penguins by Species and Island")
+       title = "Female Penguins by Species and Island") + 
+  ggsave("Group_Plot_HW7.png")
 
