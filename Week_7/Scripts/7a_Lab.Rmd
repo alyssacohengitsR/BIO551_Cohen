@@ -1,0 +1,125 @@
+---
+title: "7a Lab"
+author: "Alyssa"
+date: "3/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE, fig.path="../Outputs/"}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+
+# Lab Outline
+You need to make a map using RMarkdown with one of the following datasets from past Tidy Tuesdays. Make sure, as usual, that you scripts and output are saved appropriately.
+
+Plastic pollution
+
+Trees of San Fransisco
+
+Meteorites
+
+# Libraries
+```{r, eval = FALSE}
+library(tidyverse)
+library(here)
+library(maps)
+library(mapdata)
+library(mapproj)
+library(ggplot2)
+library(viridis)
+```
+
+
+# Data
+```{r}
+sf_trees <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-28/sf_trees.csv')
+```
+
+separate species name and common name
+```{r, eval=FALSE}
+sf_trees <- sf_trees %>%
+  separate(col = species, 
+           into = c("Species", "Common_Name"),
+           sep = "::") %>% 
+  filter(Species != "Tree(s) ") %>% 
+  rename("long" = "longitude", "lat" = "latitude") %>%
+  str_trim(sf_trees$Species, side = "right")
+
+landmark_trees <- sf_trees %>% filter(legal_status =="Landmark tree")
+```
+
+
+# Map of California
+Get the map data for san francisco county
+```{r, eval=FALSE}
+map <- map_data("county") %>% filter(region == "california")
+  
+SF_map <- map_data("county") %>% filter(subregion == "san francisco")
+
+map2 <- map_data("county") %>% filter(subregion %in% c("san francisco", "marin", "san mateo", "contra costa", "alameda"))
+
+landmark_trees$dbh <- as.numeric(landmark_trees$dbh)
+landmark_trees %>% group_by(dbh) %>% summarize(n=n())
+
+landmark_trees <- landmark_trees %>% filter(dbh<=152)
+```
+
+San Francisco Map Bounds
+|       |Lat        | Long     |
+|-------|-----------|----------|
+|Max    |37.81522   |-122.3208 |  
+|Min    |37.70062   |-122.4812 |  
+
+
+Landmark Trees Map
+```{r}
+ggplot()+
+  geom_polygon(data = SF_map, aes(x = long, y = lat, group = group), 
+             fill = "grey", alpha=0.3) +
+  geom_point(data=landmark_trees, aes(x = long, y = lat, color=Species), 
+             size=1) +
+  coord_map(xlim = c(-122.5, -122.32), ylim = c(37.71, 37.81)) + 
+  theme_void() +
+  theme(legend.position = "none",
+        plot.margin = unit(c(0.2,1,0.2,0.1), "cm")) + 
+  labs(color="Species", title = "Landmark Trees in San Francisco")
+```
+
+
+# Significant Trees
+Get list of the top 6 most common tree species
+```{r}
+sf_trees %>% filter(legal_status == "Significant Tree") %>% 
+  select(tree_id, Species, long, lat) %>% 
+  group_by(Species) %>% summarise(n=n()) %>% top_n(6)
+```
+
+Plot
+```{r}
+sf_trees %>% 
+  filter(legal_status == "Significant Tree", 
+         Species %in% c("Acacia melanoxylon", "Cupressus macrocarpa", 
+                        "Myoporum laetum", "Pinus radiata", 
+                        "Pittosporum undulatum", "Platanus x hispanica")) %>%
+  ggplot()+
+  geom_polygon(data = SF_map, aes(x = long, y = lat, group = group), 
+             fill = "grey", alpha=0.35, color="black", size=0.4) +
+  geom_point(aes(x = long, y = lat, color=Species), size=1, alpha=0.8) +
+  coord_map() + 
+  theme_void() +
+  theme(legend.position = "right", legend.direction = "vertical", 
+        legend.title = element_text(size=9), legend.text = element_text(size=8),
+        legend.margin = margin(0,0,0,0, "pt"), 
+        legend.key.size = unit(1.7, "lines"),
+        plot.margin = unit(c(0.2,1,0.2,0.1), "cm")) + 
+  labs(title = "Top 6 Significant Tree Species in San Francisco") +
+  scale_color_discrete(labels = function(x) str_wrap(x, width = 11)) +
+  guides(color = guide_legend(override.aes = list(size=2))) +
+  ggsave(here("Week_7", "Outputs", "SF_Trees.png"))
+```
+
+
+

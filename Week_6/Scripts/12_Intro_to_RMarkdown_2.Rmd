@@ -1,0 +1,210 @@
+---
+title: "12 Intro to RMarkdown 2"
+author: "Alyssa"
+date: "2021-03-03"
+output:  
+  html_document: 
+    theme: lumen
+    highlight: tango
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+<center><font size="5">
+Week 6b  
+Intro to RMarkdown 2  
+</center></font>
+
+# Outline of class:
+Working with RMarkdown today:  
+1. Working with figures  
+2. Working with tables  
+3. Themes  
+4. Advanced outputs  
+  
+Lab:  
+1. Practice with RMarkdown  
+
+# Libraries
+```{r, message=FALSE, warning=FALSE}
+library(palmerpenguins)
+library(tidyverse)
+library(here)
+library(kableExtra)
+```
+
+
+# 1. Working with Figures
+aspects of the figure right in our markdown document:  
+* change size  
+* change resolution  
+* change "device" (i.e. is it a .png. .pdf, etc.)  
+* save it in a specific folder  
+
+```{r}
+penguinsPlot <- penguins %>%
+  ggplot(aes(x=species, y=flipper_length_mm, color=island)) +
+  geom_boxplot() +
+  theme_bw()
+penguinsPlot
+```
+
+## a. Change size
+Some options:
+
+* out.width="70%" (makes it 70% of the width)  
+* fig.width=3 (makes the width 3 inches)  
+* fig.height=4 (makes the width 4 inches)  
+* fig.asp=1.2 (changes the aspect ratio to 1.2)  
+* fig.align="center"  
+* We will walk through each of these examples together  
+
+[helpful tips](https://r4ds.had.co.nz/graphics-for-communication.html#figure-sizing)  
+
+
+{r, out.width="70%"}
+```{r, out.width="70%", echo=FALSE}
+penguinsPlot
+```
+
+{r, fig.align='center', fig.asp=1.2}
+```{r, fig.align='center', fig.asp=1.2, echo=FALSE}
+penguinsPlot
+```
+
+
+## b. Save your figure
+ggsave or more automated ways to export your figures in rmarkdown  
+
+set the file path for your figure using:  
+
+* fig.path (you can put this in a global option to send all your figures there)  
+* name your code chunk (this will be the name of the figure)  
+
+Place between curly braces  
+
+* {r label}  
+
+Separated options with commas  
+
+* {r label, option1=value}  
+
+Set a figure caption  
+
+* fig.cap="This is a boxplot of penguins  
+
+If you just want the plot and not the code then set echo=FALSE
+
+
+### figure captions
+```{r, fig.align='center', fig.cap="Penguin flipper lengths", echo=FALSE}
+penguinsPlot
+```
+
+
+### label code chunks
+label is inserted after the r and a space  
+{r PenguinFig}
+```{r PenguinFig, fig.align='center', fig.cap="Penguin flipper lengths", echo=FALSE}
+penguinsPlot
+```
+
+### fig.path
+add this to chunk header  
+fig.path="../Outputs/"   
+
+the name given in the header will be used to name the file  
+this can also be added to the global options in the setup   
+```{r PenguinFig_fig.path, fig.align='center', fig.cap="Penguin flipper lengths", echo=FALSE, fig.path="../Outputs/"}
+penguinsPlot
+```
+
+
+# 2. Tables
+## a. type tables by hand  
+
+| Time  | Session | Topic    |
+|:------|:-------:|---------:|
+| 01:00  | 1       | Anatomy |
+| 01:50  |         | *Break* |
+| 02:00  | 2       | Tables  |
+| 02:45  |         | *Break* |
+
+## b. alignment 
+these line here, gives the alignment  
+|:------|:-------:|---------:|  
+| _left_ | _center_| _right_ |  
+the alignment is given by the poition of the : 
+
+## c. kable
+install.packages("kableExtra")
+library(kableExtra)
+
+make a kable table
+```{r}
+penguins %>%
+  group_by(species) %>%
+  summarise(billmean = mean(bill_length_mm, na.rm = TRUE)) %>%
+  kbl()
+```
+
+
+### themes like alterations
+```{r}
+penguins %>%
+  group_by(species) %>%
+  summarise(billmean = mean(bill_length_mm, na.rm = TRUE)) %>%
+  kbl() %>%
+  kable_classic()
+```
+
+### row specific changes
+```{r}
+penguins %>%
+  group_by(species) %>%
+  summarise(billmean = mean(bill_length_mm, na.rm = TRUE)) %>%
+  kbl() %>%
+  kable_classic() %>%
+  row_spec(2, bold = T, color = "white", background = "red")
+```
+
+## d. table packages
+There are tons of packages that make cool and beautiful tables in rmarkdown.
+
+Check out this blog with lots of examples [here](https://rfortherestofus.com/2019/11/how-to-make-beautiful-tables-in-r/)  
+
+# 3. Themes
+tons of themes for the whole markdown file  
+[theme packages](https://www.datadreaming.org/post/r-markdown-theme-gallery/)
+
+R comes with the bootswatch themes  
+
+package names:  
+
+* prettydoc  
+* rmdformats  
+* tufte  
+
+
+# 4. Advanced Outputs
+
+[list of types of outputs](https://rmarkdown.rstudio.com/lesson-9.html)
+
+github_document       allows you to view it nicely on github  
+
+each type of output has different YAML settings
+
+
+# Help with YAML
+Check out the {ymlthis} package which has a GUI for writing yml code.  
+
+`install.packages("ymlthis")`   
+
+Click __Addins__ then scroll to "write new RMarkdown or YAML file"
+

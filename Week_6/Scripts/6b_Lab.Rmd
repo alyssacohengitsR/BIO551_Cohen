@@ -1,0 +1,167 @@
+---
+title: "6b Lab"
+author: "Alyssa"
+date: "2021-03-03"
+output: 
+  rmdformats::downcute: 
+  html_document: 
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE, fig.path="../Outputs/"}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+<center><font size="5"><b>
+Week 6b: Lab  
+Intro to RMarkdown 2  
+</center></font></b>
+
+__Using any data we have used in class:__
+
+* Put in this weeks data folder  
+* Create at least one table and one figure in an Rmarkdown file.  
+* Create the most beautiful RMarkdown output you can during lab hours in either an html, github doc, or pdf format.  
+* Make sure you have headings with clear explanations of what you are doing.  
+* Practice using markdown formatting with bold, italics, and lists.  
+* Make sure your outputs and scripts are saved in the appropriate folders.  
+* Keep proper coding etiquette (figures need to be pub quality as usual).   
+
+
+# Libraries 
+```{r, message=FALSE, warning=FALSE}
+library(palmerpenguins)
+library(tidyverse)
+library(here)
+library(kableExtra)
+library(rmdformats)
+```
+
+# Data
+I have chosen to use the palmerpenguins data. I have made a long format of the data set as well as matching set of means. The means are taken of all variables by year, island, species, and sex.
+```{r}
+penguins <- glimpse(penguins) 
+
+penguins <- penguins %>% relocate(year, island, species, sex) %>% filter(sex != "NA")
+
+penguins_long <- penguins %>%
+  pivot_longer(cols = c(5:8), 
+               names_to="variables", 
+               values_to="values")
+
+means <- penguins %>%  
+  pivot_longer(cols = c(5:8), 
+               names_to="variables", 
+               values_to="values") %>%
+  group_by(year, island, species, sex, variables) %>% 
+  summarise(means=mean(values, na.rm=T))
+
+means_wide <- means %>% pivot_wider(id_cols = c(1:4), 
+                                     names_from="variables", 
+                                     values_from="means")
+```
+
+# Table
+This table shows the mean body mass (g) of all the penguins grouped by species, island, and sex. 
+```{r Penguins Mean Body Mass (g)}
+penguins %>% 
+  group_by(species, island, sex) %>%
+  summarise(mean = mean(body_mass_g, na.rm = TRUE)) %>% 
+  filter(sex != "NA") %>%
+  pivot_wider(id_cols=c(1:2), 
+              names_from="sex", 
+              values_from="mean") %>% 
+  rename("Species" = "species", 
+         "Island" = "island", 
+         "Female" = "female", 
+         "Male" = "male") %>%
+  kbl(caption = "<b>Penguins Mean Body Mass (g)</b>") %>% 
+  kable_classic() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), full_width = F) %>% 
+  collapse_rows(columns = 1, valign = "top") %>%
+  row_spec(row=0, bold = T, background = "aliceblue")
+```
+
+# Plot
+Plot all variables and their means for each year. The means are shown with the darker markers.
+```{r}
+penguins_long$variables <- factor(penguins_long$variables, 
+                                  levels = c("bill_depth_mm", "bill_length_mm",
+                                             "body_mass_g", "flipper_length_mm"),
+                                  labels = c("Bill Depth (mm)", "Bill Length (mm)", 
+                                             "Body Mass (g)", "Flipper Length (mm)"))
+means$variables <- factor(means$variables, 
+                                  levels = c("bill_depth_mm", "bill_length_mm",
+                                             "body_mass_g", "flipper_length_mm"),
+                                  labels = c("Bill Depth (mm)", "Bill Length (mm)", 
+                                             "Body Mass (g)", "Flipper Length (mm)"))
+
+penguins_long %>%
+  ggplot(aes(x=year, y=values, color=sex, group=sex, shape=factor(species))) +
+  geom_jitter(alpha=0.3, position = position_jitterdodge(0.2)) + 
+  geom_point(data=means, aes(x=year, y=means, shape=factor(species))) +
+  facet_grid(variables~island, scale="free_y", 
+             labeller = label_wrap_gen(multi_line = TRUE, width = 12)) +
+  theme_bw() +
+  theme(legend.position = "bottom", legend.direction = "horizontal", 
+        legend.box = "vertical", legend.box.just = "left", legend.margin = margin(0),
+        legend.key.size = unit(12, "points"), legend.text = element_text(size=7), 
+        legend.title = element_text(size=9), legend.spacing.y = unit(0, "lines"), 
+        strip.background = element_rect(fill = "white", color = "white"), 
+        strip.text = element_text(size=10), 
+        strip.text.y = element_text(angle = 0, size=8, hjust = 0, 
+                                         margin = margin(2, 0, 0, 1, 
+                                                unit = "pt")),
+        axis.title = element_text(size=9), axis.text = element_text(size=6)) +
+  labs(x = "Bill Depth (mm)", y = "Bill Length (mm)", color="Sex", shape="Species") +
+  scale_x_continuous(breaks = seq(from=2007, to=2009, by=1)) 
+```
+
+
+## Bill Depth v Bill Length
+plot of the bill length by the depth. the means are included and shown by the darker markers and labeled with their year. 
+```{r}
+penguins %>% filter(sex != "NA") %>% 
+  ggplot(aes(x=bill_depth_mm, y=bill_length_mm, color=sex, shape=factor(species))) +
+  geom_point(alpha=0.3) +
+  geom_point(data=means_wide, alpha=1) +
+  geom_text(data=means_wide, aes(label=year), size=2, nudge_x = 0.25, nudge_y = 0.25,
+            check_overlap = T) +
+  facet_wrap(island~.) +
+  theme_bw() +
+  theme(legend.position = "bottom", legend.direction = "horizontal", 
+        legend.box = "vertical", legend.box.just = "left",
+        legend.text = element_text(size=8), legend.title = element_text(size=9), 
+        legend.margin = margin(0), legend.spacing.y = unit(0, "lines"), 
+        strip.background = element_rect(fill = "white", color = "white"), 
+        strip.text = element_text(size=10), axis.title = element_text(size=9)) +
+  labs(x = "Bill Depth (mm)", y = "Bill Length (mm)", color="Sex", shape="Species") + 
+  ggsave(here("Week_6", "Outputs", "Bill_Depth_Length.png"))
+```
+
+
+## flipper length v. body mass
+plot of the body mass by the flipper length. the means are included and shown by the darker markers and labeled with their year.
+```{r}
+penguins %>% filter(sex != "NA") %>% 
+  ggplot(aes(x=flipper_length_mm, y=body_mass_g, color=sex, shape=factor(species))) +
+  geom_point(alpha=0.3) +
+  geom_point(data=means_wide, alpha=1) +
+  geom_text(data=means_wide, aes(label=year), size=2, nudge_x = 4, nudge_y = -0.7,
+            check_overlap = T) +
+  facet_wrap(island~.) +
+  theme_bw() +
+  theme(legend.position = "bottom", legend.direction = "horizontal", 
+        legend.box = "vertical", legend.box.just = "left", 
+        legend.box.margin = margin(0, 0, 0, 0), legend.key.size = unit(12, "points"),
+        legend.text = element_text(size=8), legend.title = element_text(size=9), 
+        legend.margin = margin(0), legend.spacing.y = unit(0, "lines"), 
+        strip.background = element_rect(fill = "white", color = "white"), 
+        strip.text = element_text(size=10), axis.title = element_text(size=9), 
+        axis.text = element_text(size=6)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)", color="Sex", shape="Species")
+```
+

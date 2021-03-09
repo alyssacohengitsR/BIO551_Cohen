@@ -1,0 +1,42 @@
+---
+title: "5a_Lab"
+author: "Alyssa"
+date: "3/1/2021"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE)
+```
+
+# Introduction
+Today we are going to work with the penguin data to learn *RMarkdown*.  
+
+## Libraries
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(here)
+```
+
+# Data
+```{r}
+glimpse(penguins)
+```
+# Make a plot
+plot bill length v. bill depth and add a best fit line for a linear model
+```{r}
+penguins %>% 
+  ggplot(aes(x=bill_length_mm, y=bill_depth_mm, color=species)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(x= "Bill Length (mm)", 
+       y= "Bill Depth (mm)") +
+  theme_bw()
+```
+

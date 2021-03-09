@@ -41,12 +41,10 @@ DepthData <- DepthData %>% mutate(date = ymd_hms(date))
 CondData <- CondData %>% mutate(date = ymd_hms(date), 
                                 date = round_date(date, "10 seconds"))
 
-# Join the two dataframes together ----
-Cond_Depth_Data <- inner_join(CondData, DepthData)
-
-# get means and plot ----
+# Join data frames & get means ----
 ##  averages of date, depth, temperature, and salinity by minute 
-means <- Cond_Depth_Data %>%
+
+Cond_Depth_Data <- inner_join(CondData, DepthData) %>%
   mutate(Hour = hour(date), 
          Minute = minute(date)) %>%
   group_by(Hour, Minute) %>% 

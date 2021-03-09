@@ -1,0 +1,116 @@
+---
+title: "11 Intro to RMarkdown"
+author: "Alyssa"
+date: "2021-03-01"
+output: 
+  html_document: 
+    theme: simplex
+    highlight: tango
+---
+
+<center>
+Week 6a  
+Intro to RMarkdown  
+</center>
+
+# Outline of class:
+Working with RMarkdown today:  
+1. What is RMarkdown?  
+2. RMarkdown metadata and outputs  
+3. Basic Markdown text  
+4. Using code chunks  
+  
+Lab:  
+1. Practice with RMarkdown  
+
+Next Time:  
+1. Working with figures  
+2. Working with tables  
+3. Themes  
+4. Advanced outputs  
+
+
+# 1. What is RMarkdown?
+what's inside
+
+# 2. RMarkdown metadata and outputs
+Metadata: YAML
+
+# 3. Basic Markdown text
+install packages in the console  
+install.packages("rmarkdown")  
+install.packages('tinytex')  
+
+## Headers
+these are used to create the table of contents  
+use the # to add headers  
+the more # used will change the header level  
+
+## Bold
+can use ** or __ before and after the text want to bold  
+EXs:  
+**text to bold**  
+__text to bold__  
+
+## Italics
+use one * or _ before and after the text want to make italic  
+EXs:
+*italic text*
+_italic text_
+
+## add new line
+to write on the next line must end the previous line with two spaces  
+
+## Lists
+bulleted lists use -  
+and you must put an empty line before the list 
+
+EX:  
+
+- item 1  
+- item 2  
+- item 3   
+
+numbered list use normal syntax  
+EX:  
+1. Item 1  
+2. Item 2  
+3. Item 3  
+
+## Images
+use syntax 
+```{r, eval=FALSE}
+![image caption](link)
+```
+
+EX:  
+![CSUN logo](https://www.csun.edu/sites/default/files/styles/slideshow_full/public/field_image/field_slideshow_slides/banner_identity02.png?itok=yItY0d62)
+
+## Links
+[Click here](silbigerlab.com)
+
+
+# 4. Using code chunks
+You can control what you want printed in the html within the code chunks  
+
+## Chunk options
+displayed inside the {} and after r,  
+
+* `incude = FASLE`  prevents code and results from appearing in file  
+* `echo = FALSE`    prevents code from appearing in file
+
+## Global options
+set options for entire file  
+at begining of file add
+```{r, eval=FALSE}
+kintr::opts_chunk$set
+```
+anything passed here will be applied to entire document  
+EX:  
+```{r, eval=FALSE}
+kintr::opts_chunk$set(echo = TRUE,  
+                      warning = FALSE)
+```
+
+
+
