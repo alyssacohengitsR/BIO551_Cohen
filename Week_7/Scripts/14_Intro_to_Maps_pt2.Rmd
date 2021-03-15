@@ -1,0 +1,173 @@
+---
+title: "R Notebook"
+output: 
+  html_notebook: 
+    theme: spacelab
+editor_options: 
+  markdown:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+<center>
+
+<font size="5">
+
+Week 7b\
+Intro to Maps part 2
+
+</center>
+
+</font>
+
+# Outline of Class
+
+Working with Maps part 2:
+
+1.  {ggmaps}
+
+Lab:
+
+1.  Good plot/Bad plot lab
+
+[ggmap article](http://stat405.had.co.nz/ggmap.pdf)\
+[Making plots with ggmap](https://www.littlemissdata.com/blog/maps)\
+[Setting up ggmap](https://www.findingyourway.io/blog/2018/12/05/2018-12-05-using-ggmap-after-july-2018/)
+
+# Libraries
+
+install ggmaps and ggsn
+
+```{r, eval=FALSE}
+install.packages("ggmap")
+install.packages("ggsn")
+```
+
+load libraries for today
+
+```{r, warning=TRUE, message=TRUE}
+library(ggmap)
+library(tidyverse)
+library(here)
+library(ggsn)
+```
+
+use your own API IMPORTANT don't put your key to github!! I usually save mine in a text file and import it each time
+
+```{r, eval=FALSE}
+register_google(key = "AIzaSyCTLtIVH1tWKFwskcADuO7hlzjZ9wiSVjY")
+```
+
+# Data
+
+```{r}
+ChemData<-read_csv(here("Week_7","Data","chemicaldata_maunalua.csv"))
+glimpse(ChemData)
+```
+
+# Get base maps from ggmap
+
+*get_map()* is the function to get a basemap from Google Maps. At it's simplest form, you only need to put in a location.
+
+## Location as a string
+
+```{r, warning=FALSE, message=FALSE}
+Oahu <- get_map("Oahu")
+```
+
+## Use ggmap to plot the base layer
+
+```{r, out.width="60%", fig.align="center"}
+ggmap(Oahu)
+```
+
+## Get coordinates for Wailupe on Oahu:
+
+-   Make a data frame of lon and lat coordinates
+
+    -   coordinates for Wailupe
+
+-   Get base layer
+
+-   Plot it
+
+```{r, warning=FALSE, message=FALSE, out.width="60%", fig.align='center'}
+WP<-data.frame(lon = -157.7621, lat = 21.27427) 
+
+Map1<-get_map(WP)
+
+ggmap(Map1)
+```
+
+## Zoom in on a location
+
+The *zoom* argument, an integer from **3 to 20** specifying how large the spatial extent should be around the center, with 3 being the **continent level** and 20 being roughly the **single building level**.
+
+```{r, warning=FALSE, message=FALSE, out.width="60%", fig.align='center'}
+Map1<-get_map(WP,zoom = 17)
+
+ggmap(Map1)
+```
+
+## Change the map type
+
+There are lots of different ones. look at ?get_map
+
+Satellite Maps:
+
+```{r, warning=FALSE, message=FALSE, out.width="60%", fig.align='center'}
+Map1<-get_map(WP,zoom = 17, maptype = "satellite")
+
+ggmap(Map1)
+```
+
+Water Color:
+
+```{r, warning=FALSE, message=FALSE, out.width="60%", fig.align='center'}
+Map1<-get_map(WP,zoom = 17, maptype = "watercolor")
+
+ggmap(Map1)
+```
+
+# Use the ggmap base layer in any ggplot
+
+```{r, warning=FALSE, message=FALSE, out.width="60%", fig.align='center'}
+Map1<-get_map(WP,zoom = 17, maptype = "satellite") 
+
+ggmap(Map1)+
+  geom_point(data = ChemData, 
+             aes(x = Long, y = Lat, color = Salinity),
+             size = 2) + 
+  scale_color_viridis_c()
+```
+
+# Add scale bar
+
+```{r, warning=FALSE, message=FALSE, out.width="60%", fig.align='center'}
+ggmap(Map1)+
+  geom_point(data = ChemData, 
+             aes(x = Long, y = Lat, color = Salinity), 
+             size = 2) + 
+  scale_color_viridis_c()+
+  scalebar( x.min = -157.766, x.max = -157.758,
+           y.min = 21.2715, y.max = 21.2785,
+            dist = 250, dist_unit = "m", model = "WGS84", 
+            transform = TRUE, st.color = "white",
+            box.fill = c("yellow", "white")) 
+```
+
+# geocode()
+
+This is what you use if you don't know exact lat and long.\
+Use *geocode()* to get exact locations that you can then use in the maps.
+
+```{r, message=FALSE, warning=FALSE}
+geocode("the white house")
+
+geocode("California State University, Northridge")
+```

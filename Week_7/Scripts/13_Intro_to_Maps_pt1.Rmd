@@ -8,6 +8,8 @@ output:
     highlight: tango
     toc: yes
     toc_float: yes
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -16,29 +18,32 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE)
 ```
 
-<center><font size="5">
-Week 7a  
-Intro to Maps part 1  
-</center></font>
+<center>
+
+<font size="5"> Week 7a\
+Intro to Maps part 1
+
+</center>
+
+</font>
 
 # Outline of Class
-Working with Maps:  
 
-1. Highlight some various spatial packages  
-2. Simple mapping using the {maps} package with ggplot  
+Working with Maps:
 
-Lab:  
+1.  Highlight some various spatial packages\
+2.  Simple mapping using the {maps} package with ggplot
 
-1. Make a map  
+Lab:
 
+1.  Make a map
 
 # New text editor
-download new Rstudio 
-shows up on top right as A
-{r}
-1+1
+
+download new Rstudio shows up on top right as A {r} 1+1
 
 # Libraries
+
 ```{r, eval = FALSE}
 library(tidyverse)
 library(here)
@@ -48,53 +53,57 @@ library(mapproj)
 ```
 
 # Data
-population in California by county  
-number of seastars at different field sites  
+
+population in California by county\
+number of seastars at different field sites
+
 ```{r}
 popdata<-read_csv(here("Week_7","Data","CApopdata.csv"))
 stars<-read_csv(here("Week_7","Data","stars.csv"))
 ```
 
-
-
 # 1. Highlight some various spatial packages
 
 ## Map Packages
+
 Today we will use these two:
+
 ```{r, message=FALSE, warning=FALSE}
 install.packages(c("maps", "mapproj"))
 install.packages("mapdata")
 ```
 
-Other very helpful packages:  
+Other very helpful packages:
 
-* __sf__    (This is for the serious GIS people. If you want to do actual spatial analyses this is the package to use)  
-* __ggmap__   (Uses the google maps API to make maps. Really easy to use, but requires a credit card for the API...)  
-* __tmap__    (static and interactive maps)  
-* __leaflet__   (interactive html maps)  
+-   **sf** (This is for the serious GIS people. If you want to do actual spatial analyses this is the package to use)\
+-   **ggmap** (Uses the google maps API to make maps. Really easy to use, but requires a credit card for the API...)\
+-   **tmap** (static and interactive maps)\
+-   **leaflet** (interactive html maps)
 
-Helpful references:  
+Helpful references:
 
-1. The required reading for today  
-2. Advanced maps  
-3. Bathymetry example  
-4. Earth Lab  
-
+1.  The required reading for today\
+2.  Advanced maps\
+3.  Bathymetry example\
+4.  Earth Lab
 
 ## {maps} package
-The {maps} package is a combination of functions that pair well with ggplot and base layers for maps (i.e. polygons of regions of interest).  
 
-map_data("location") is the function used to pull out whatever base layer that you want.  
+The {maps} package is a combination of functions that pair well with ggplot and base layers for maps (i.e. polygons of regions of interest).
+
+map_data("location") is the function used to pull out whatever base layer that you want.
 
 ### Extract data from mapdata package
+
 Data for the entire world:
+
 ```{r}
 world<-map_data("world")
 head(world)
 ```
 
-
 Polygons for different countries:
+
 ```{r}
 usa<-map_data("usa")
 head(usa)
@@ -103,55 +112,59 @@ italy<-map_data("italy")
 head(italy)
 ```
 
-
-### Extract data and different resolutions.  
+### Extract data and different resolutions.
 
 For example for data that also has polygons for each state in the US use:
+
 ```{r}
 states<-map_data("state")
 head(states)
 ```
 
+For example for data that also has polygons for each county in the US use:
 
-For example for data that also has polygons for each county in the US use:  
 ```{r}
 counties<-map_data("county")
 head(counties)
 ```
 
-
 ### Structure of the data
 
-* **long** is longitude. Things to the west of the prime meridian are negative.  
+-   **long** is longitude. Things to the west of the prime meridian are negative.
 
-* **lat** is latitude  
+-   **lat** is latitude
 
-* **order** This just shows in which order ggplot should “connect the dots”  
+-   **order** This just shows in which order ggplot should "connect the dots"
 
-* **region and subregion** tell what region or subregion a set of points surrounds.  
+-   **region and subregion** tell what region or subregion a set of points surrounds.
 
-* **group**  
-  + This is very important!  
-  + ggplot2’s functions can take a group argument which controls (amongst other things) whether adjacent points should be connected by lines.  
-    + If they are in the same group, then they get connected, but if they are in different groups then they don’t.  
-    + Essentially, having to points in different groups means that ggplot “lifts the pen” when going between them.  
-    
+-   **group**
+
+    -   This is very important!\
+
+    -   ggplot2's functions can take a group argument which controls (amongst other things) whether adjacent points should be connected by lines.
+
+        -   If they are in the same group, then they get connected, but if they are in different groups then they don't.\
+        -   Essentially, having to points in different groups means that ggplot "lifts the pen" when going between them.
+
 # 2. Simple mapping using the {maps} package with ggplot
 
 ## Map of the world
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, aes(x = long, y = lat, group = group))
 ```
 
-this is what happens when you forget __group__ = __group__ :
+this is what happens when you forget **group** = **group** :
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, aes(x = long, y = lat))
 ```
 
-
 Add color to the lines and fill:
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, 
@@ -159,8 +172,8 @@ ggplot()+
                color = "black")
 ```
 
-
 Color by country:
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, 
@@ -172,10 +185,10 @@ ggplot()+
   guides(fill = FALSE)
 ```
 
-
 ## Change the visuals
 
 ### Theme
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, 
@@ -188,8 +201,8 @@ ggplot()+
   theme_minimal()
 ```
 
-
 ### Make ocean blue
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, 
@@ -203,11 +216,12 @@ ggplot()+
   theme(panel.background = element_rect(fill = "lightblue"))
 ```
 
-
 ### Change map projection
+
 The earth is NOT flat, but we are attempting to visualize this map in 2D. There are a lot of different projections that you can use. See here for the different projections included in the {mapproj} package
 
 Use a mercator projection
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, 
@@ -223,9 +237,8 @@ ggplot()+
             xlim = c(-180,180))
 ```
 
-
-
 Use a sinusoidal projection.
+
 ```{r}
 ggplot()+
   geom_polygon(data = world, 
@@ -241,16 +254,17 @@ ggplot()+
             xlim = c(-180,180))
 ```
 
-
 ## Map of just California
+
 Use the states dataset
+
 ```{r}
 CA_data<-states %>%
   filter(region == "california")
 ```
 
-
 ### T,P,S: make a map of California
+
 ```{r}
 ggplot()+
 geom_polygon(data = CA_data, 
@@ -262,18 +276,20 @@ geom_polygon(data = CA_data,
   theme_void()
 ```
 
-
 ## Adding multiple layers of data
+
 Plot the population of every county in California.
 
-First, Get the county level data and join it with our dataset on population  
+First, Get the county level data and join it with our dataset on population
+
 ```{r}
 head(counties)[1:3,]
 head(popdata)
 ```
 
-Wrangle the data. Make the column names the same to join the two datasets.  
+Wrangle the data. Make the column names the same to join the two datasets.\
 Join by "subregion"
+
 ```{r}
 CApop_county<-popdata %>%
   select("subregion" = County, Population)  %>% # rename the county col
@@ -284,6 +300,7 @@ head(CApop_county)
 ```
 
 ### Map of CA population by county
+
 ```{r}
 ggplot()+
 geom_polygon(data = CApop_county, 
@@ -296,8 +313,8 @@ geom_polygon(data = CApop_county,
   theme_void()
 ```
 
-
 Log scale for easier interpretation
+
 ```{r}
 ggplot()+
 geom_polygon(data = CApop_county, 
@@ -311,14 +328,16 @@ geom_polygon(data = CApop_county,
   scale_fill_gradient(trans = "log10")
 ```
 
-
 ### Add a layer of points
+
 Look at the stars dataset. This has the number of seastars per/m2 at different sites in California.
+
 ```{r}
 head(stars)
 ```
 
 Add a geom_point layer
+
 ```{r}
 ggplot()+
 geom_polygon(data = CApop_county, 
@@ -335,8 +354,8 @@ geom_polygon(data = CApop_county,
   scale_fill_gradient(trans = "log10")
 ```
 
+Make points proportional to number of stars
 
-Make points proportional to number of stars 
 ```{r}
 ggplot()+
 geom_polygon(data = CApop_county, 
@@ -355,6 +374,7 @@ geom_polygon(data = CApop_county,
 ```
 
 Make a better legend label
+
 ```{r}
 ggplot()+
 geom_polygon(data = CApop_county, 
@@ -373,8 +393,8 @@ geom_polygon(data = CApop_county,
   labs(size = "# stars/m2")
 ```
 
-
 Save it
+
 ```{r}
 ggplot()+
 geom_polygon(data = CApop_county, 
@@ -393,12 +413,3 @@ geom_polygon(data = CApop_county,
   labs(size = "# stars/m2") +
   ggsave(here("Week_7","Outputs","CApop.pdf"))
 ```
-
-
-
-
-
-
-
-
-
