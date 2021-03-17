@@ -8,26 +8,89 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE,
+                      warning=FALSE, 
+                      fig.path='../Outputs/')
 ```
 
 # Good Plot v Bad Plot {.tabset .tabset-fade .tabset-pills}
 
 ## Home
 
-```{r, out.width=c('50%', '50%'), fig.show='hold'}
-
-```
-
-::: {.columns}
-::: {.column width="50%" data-latex="{0.05\\textwidth}"}
-Text describing Good Plot.
+::: {style="display: grid;  grid-template-columns: 1fr 1fr 1fr 1fr;  grid-column-gap: 10px;  grid-template-rows: 1fr 1fr; grid-row-gap: 10px"}
+::: {style="display: grid; grid-column: 1/ span 2;  grid-row: 1/ span 1"}
+![](images/bad_plot-1-01.png)
 :::
 
-::: {.column width="50%" data-latex="{0.05\\textwidth}"}
-Text describing bad plot
+::: {style="display: grid; grid-column: 3/ span 2;  grid-row: 1/ span 1"}
+![](images/good_scatter-1-03.png)
+:::
+
+::: {style="display: grid; grid-column: 2/ span 2; grid-row: 2/ span 1"}
+![](images/good_bar-1-02.png)
 :::
 :::
+
+------------------------------------------------------------------------
+
+<center><font size="5">
+The Bad Plot
+</center></font>
+
+![**Fig.1:** The Bad Plot](images/bad_plot-1-02.png "Fig. 1")
+
+\
+
+-   green background ➜ hard to see the scatter plot
+
+-   pink legend background ➜ can't see key colors very well
+
+-   font is unprofessional
+
+-   facet titles are on top of the plot
+
+-   there is no x or y axis scale
+
+-   sort of odd that the legend is on top
+
+------------------------------------------------------------------------
+
+<center><font size="5">
+The Good Plot
+</center></font>
+
+![**Fig. 2:** Good Plot, Scatter](images/good_scatter-1-04.png)
+
+\
+
+-   can easily see a difference between each type of metabolic rate that was measured
+
+-   you know the scale of both variables
+
+-   everything is clearly labeled
+
+-   the units are given
+
+-   not cluttered with divisions between sites
+
+-   color blind friendly color palette
+
+\
+
+![**Fig. 3:** Good Plot, Bar](images/good_bar-1-03.png)
+
+\
+
+-   can clearly see the variation between sites for all variables
+
+-   units are given
+
+-   axis scale is clear
+
+-   the faint grid lines help to read axis at the far end of the plot
+
+-   color blind friendly color palette
 
 ## Info
 
@@ -37,7 +100,7 @@ Text describing bad plot
 
 <p style="color:black">
 
-Good Plot Bad Plot Lab\
+Good Plot Bad Plot Lab
 
 </center>
 
@@ -58,8 +121,11 @@ Submission Details
 -   Post a markdown document containing
 
     -   The plots
+
     -   The code you used to create them
+
     -   Your discussion of the plot within the markdown doc to github
+
     -   Data also needs to be submitted
 
 -   Bad Plot
@@ -67,6 +133,7 @@ Submission Details
     -   Should be as bad as possible
 
         -   Your reading from Claus Wilke's and Healy's textbook describe the many ways that a plot cab become misleading, difficult to interpret, or or just plain ugly, and you should use all of the tools that you can.
+
         -   Please try to make me, a person who cares a great deal about high-quality data visualization, cry.
 
     -   You should explain in text all of the ways in which the bad plot is bad
@@ -97,18 +164,22 @@ Submission Details
 
 ## Libraries
 
-```{r, warning=TRUE, message=TRUE}
+This is a list of the libraries I used to complete the plots.
+
+```{r, results='hide'}
 library(tidyverse)
 library(here)
 library(extrafont)
 library(yarrr)
+library(gt)
+library(egg)
+library(bookdown)
+library(RColorBrewer)
 ```
 
-Loaded my computer's fonts with the extrafonts package
+To use different fonts in the bad plot I loaded on extra fonts. Loaded my computer's fonts with the extrafonts package I imported the fonts then viewed which loaded.
 
-I imported the fonts then viewed which loaded.
-
-```{r, eval=FALSE}
+```{r, echo=FALSE}
 font_import()
 fonts()
 fonttable()
@@ -117,9 +188,23 @@ fonttable()[40:45,]
 
 ## Data
 
-### Metadata
+<center>
 
-#### Site Characteristics Data
+<font size="5"><b> Metadata
+
+</center>
+
+</font></b>
+
+The data comes from **Becker and Silbiger (2020) Journal of Experimental Biology**
+
+This data was collected to test how nutrient loading and sedimentation affected thermal performance metrics of corals in Mo'orea, French Polynesia. A total of 10 corals from six sites, with wide range in nutrients/sedimentation, were collected. Each coral underwent a heat ramping experiment to calculate thermal performance measures for respiration, photosynthesis, and calcification. At each site several environmental characteristics were measured.\
+\
+
+### Site Characteristics Data
+
+\
+<b>Table A:</b> Site Characteristics Metadata
 
 +--------------------+-----------------------------------------------------------+------------------------------+
 | Variable           | Description                                               | Values/Units                 |
@@ -139,39 +224,46 @@ fonttable()[40:45,]
 | values             | value of the measurement taken                            |                              |
 +--------------------+-----------------------------------------------------------+------------------------------+
 
-Parameters
+\
+<b>Table B:</b> Description of the Parameters Measured
 
-+------------------------+--------------------------------+----------------------+
-| Code                   | Description                    | Unit                 |
-+========================+================================+======================+
-| Light                  | proton flux density            |                      |
-+------------------------+--------------------------------+----------------------+
-| temp                   | Temperature                    | C                    |
-+------------------------+--------------------------------+----------------------+
-| NH4                    | ammonium                       | umol/L               |
-+------------------------+--------------------------------+----------------------+
-| N.N                    | Nitrate + nitrite              | umol/l               |
-+------------------------+--------------------------------+----------------------+
-| P                      | phosphate                      | umol/L               |
-+------------------------+--------------------------------+----------------------+
-| DIN_DIP                | nitrogen to phosphorus ratio   | ratio                |
-+------------------------+--------------------------------+----------------------+
-| N                      | tissue N in Sargassum          | \%                   |
-+------------------------+--------------------------------+----------------------+
-| trap.accumulation.rate | sedimentation rate             |                      |
-+------------------------+--------------------------------+----------------------+
-| CCA.cover              | crustose coralline algae cover | \%                   |
-+------------------------+--------------------------------+----------------------+
-| algal.cover            | fleshy algae cover             | \%                   |
-+------------------------+--------------------------------+----------------------+
-| p.acuta.cover          | *Pocillopora acuta* cover      | \%                   |
-+------------------------+--------------------------------+----------------------+
-| coral.cover            | coral cover                    | \%                   |
-+------------------------+--------------------------------+----------------------+
-| substrate.cover        | other substrate cover          | \%                   |
-+------------------------+--------------------------------+----------------------+
++------------------------+--------------------------------+-------------+
+| Code                   | Description                    | Unit        |
++========================+================================+=============+
+| Light                  | proton flux density            |             |
++------------------------+--------------------------------+-------------+
+| temp                   | Temperature                    | C           |
++------------------------+--------------------------------+-------------+
+| NH4                    | ammonium                       | umol/L      |
++------------------------+--------------------------------+-------------+
+| N.N                    | Nitrate + nitrite              | umol/l      |
++------------------------+--------------------------------+-------------+
+| P                      | phosphate                      | umol/L      |
++------------------------+--------------------------------+-------------+
+| DIN_DIP                | nitrogen to phosphorus ratio   | ratio       |
++------------------------+--------------------------------+-------------+
+| N                      | tissue N in Sargassum          | \%          |
++------------------------+--------------------------------+-------------+
+| trap.accumulation.rate | sedimentation rate             |             |
++------------------------+--------------------------------+-------------+
+| CCA.cover              | crustose coralline algae cover | \%          |
++------------------------+--------------------------------+-------------+
+| algal.cover            | fleshy algae cover             | \%          |
++------------------------+--------------------------------+-------------+
+| p.acuta.cover          | *Pocillopora acuta* cover      | \%          |
++------------------------+--------------------------------+-------------+
+| coral.cover            | coral cover                    | \%          |
++------------------------+--------------------------------+-------------+
+| substrate.cover        | other substrate cover          | \%          |
++------------------------+--------------------------------+-------------+
 
-#### Topt Data
+\
+\
+
+### Topt Data
+
+\
+<b>Table C:</b> Metadata for the topt data set
 
 +-------------+--------------------------------------------------------------------------+----------------------------+
 | Variable    | Description                                                              | Values/Units               |
@@ -197,81 +289,218 @@ Parameters
 | site.letter | Code associated with each site                                           |                            |
 +-------------+--------------------------------------------------------------------------+----------------------------+
 
+\
+
+### Load Data
+
 ```{r}
 sites <- read_csv(here("Week_5", "Data", "site.characteristics.data.csv"))
 
 topt <- read_csv(here("Week_5", "Data", "Topt_data.csv"))
 ```
 
-## Plots
+## Code
 
-```{r}
-
-  
-```
-
-Coral Topt Rates Plot
+To begin I prepared the data for plots. I combined the topt with the site data, then renamed the variables for activation energy, rate, and site.
 
 ```{r}
 coral_plot <- sites %>% select(name, site.letter) %>% 
   right_join(topt) %>% 
   select(fragment.ID, rate.type, "Activation_Energy"=E, "Rate"=lnc, "Site"= name)
+```
 
+\
+
+### **The Bad Plot**
+
+Next I made a new data frame for the plot labels for the bad plot so that I could place them in the center of the plots. I did this by making a new data frame with the x and y values to center the labels within their respective plot. I estimated the "activation energy" and "rate" values from the plot and added them into the data frame.
+
+```{r bad plot labels}
 coral_plot_labels <- data.frame(rate.type = unique(coral_plot$rate.type)) %>%
   mutate(Type = recode(rate.type, 
+                       "C" ="Calcification",
                        "R" ="Respiration",
-                       "GP"="Gross Photosynthesis",
-                       "C" ="Calcification"))
-coral_plot_labels$Activation_Energy <- c(1, 0.28, 0.17)
-coral_plot_labels$Rate <- c(1.5, 0.65,0.35)
+                       "GP"="Gross Photosynthesis"))
+coral_plot_labels$Activation_Energy <- c(1, 0.17, 0.28)
+coral_plot_labels$Rate <- c(1.5, 0.45, 0.9)
 ```
 
-```{r}
+```{r table 1, ref.label='table 1 bad plot labels', eval=TRUE, echo=FALSE}
+
+```
+
+<details>
+
+<summary>
+Table Code
+</summary>
+
+```{r table 1 bad plot labels, echo=TRUE, eval=FALSE}
+gt(coral_plot_labels) %>%
+  cols_label(rate.type="Rate Type Code",
+              Type="Metabolic Rate Type", 
+              Activation_Energy="Activation Energy (eV)", 
+              Rate=html("Rate (umol cm<sup>-2</sup> hr<sup>-1</sup>)") ) %>%
+  tab_style(
+    style = list(cell_borders(sides = "bottom",
+                              color = "black",
+                              weight = px(3)),
+                 cell_text(weight = "bold", 
+                           align = "center",
+                           size = "small")),
+    locations = cells_column_labels(columns = gt::everything())) %>%
+  cols_align(
+    align = "center",
+    columns = vars(rate.type, Activation_Energy, Rate)) %>% 
+  tab_style(
+    style = cell_text(size = "small"), 
+    locations = cells_body(columns = gt::everything())) %>%
+  tab_header(title=md("**Table 1:** Resulting data frame for the bad plot labels")) %>%
+  tab_options(heading.align = "left", heading.title.font.size = "x-small", 
+              table.border.top.style = "NULL"
+  )
+```
+
+</details>
+
+\
+
+Then I completed the code for the bad plot. I added in the plot titles as text using`geom_text` and the data from **Table 1**.
+
+::: {style="display: grid;  grid-template-columns: 1.3fr 0.7fr;  grid-column-gap: 10px"}
+<div>
+
+```{r bad plot code, ref.label='bad_plot', eval=FALSE, echo=TRUE}
+
+```
+
+</div>
+
+<div>
+
+```{r bad_plot, fig.cap="**Fig. 1:** Bad Plot", dev='png', eval=TRUE, echo=FALSE}
 coral_plot %>%
-  ggplot(aes(x=Activation_Energy, y=Rate, color=Site)) +
-  geom_point() +
-  facet_wrap(rate.type~., nrow=3, ncol=1, scales = "free",
-             labeller=labeller(rate.type=c("R" ="Respiration", 
-                                           "GP"="Gross Photosynthesis", 
-                                           "C" ="Calcification"))) +
-  scale_color_manual(values=unname(piratepal(palette = "pony", length.out = 6))) +
-  theme_bw() +
-  theme(legend.position = "bottom", plot.background = element_rect(fill=NULL),
-        strip.text = element_text(face="bold"))
+  ggplot(aes(x=Activation_Energy, y=Rate)) + 
+  geom_rect(fill = "seagreen1", 
+            xmin = -Inf, xmax = Inf, 
+            ymin = -Inf, ymax = Inf) +
+  geom_point(aes(color=Site)) +
+  facet_wrap(rate.type~., nrow=3, ncol=1, scales = "free") + 
+  scale_color_manual(values=unname(piratepal(palette = "pony", 
+                                             length.out = 6))) +
+  geom_text(data=coral_plot_labels, aes(label=Type), 
+            hjust="middle", size=15, color="magenta", 
+            fontface="bold", family="PartyLetPlain") +
+  labs(caption="activation energy & rate") +
+  theme_classic() +
+  theme(legend.position = "top", legend.title = element_blank(),
+        legend.background = element_rect(fill="orchid1", size=0.5), 
+        legend.text = element_text(color="magenta"),
+        plot.background = element_rect(fill="seagreen1"), 
+        strip.background = element_blank(), 
+        strip.text.x = element_blank(), 
+        axis.text = element_blank(), axis.ticks = element_blank(), 
+        axis.title = element_blank(), 
+        axis.line = element_line(color="green"),
+        plot.caption = element_text(color = "green", 
+                                    family="PartyLetPlain"))
 ```
 
-```{r}
+</div>
+:::
+
+\
+
+### **The Good Plots**
+
+This plot is a much better representation of the differences in the activation energy and rate for each metabolic rate type. I have included the raw data point and a linear regression line to show the relationship between the two variables.
+
+::: {style="display: grid;  grid-template-columns: 1.3fr 0.7fr;  grid-column-gap: 10px"}
+<div>
+
+```{r good scatter code, ref.label='good_scatter', eval=FALSE, echo=TRUE}
+
+```
+
+</div>
+
+<div>
+
+```{r good_scatter, fig.cap="**Fig. 2:** Good Plot", dev='png', eval=TRUE, echo=FALSE}
 coral_plot %>%
   ggplot(aes(x=Activation_Energy, y=Rate, color=rate.type)) +
-  geom_point() +
-  scale_color_manual(values=unname(piratepal(palette = "pony", length.out = 6))) +
-  theme_bw() +
-  scale_color_discrete(name = "Type", labels = c("Calcification", 
-                                                 "Gross Photosynthesis", 
-                                                 "Respiration"))
-  
-coral_plot %>%
-  ggplot(aes(x=Activation_Energy, y=Rate)) +
-  geom_point(aes(color=Site)) +
-  facet_wrap(rate.type~., nrow=3, ncol=1, scales = "free") +
-  scale_color_manual(values=unname(piratepal(palette = "pony", length.out = 6))) +
-  theme_bw() 
-  theme(legend.position = "bottom", plot.background = element_rect(fill=NULL), 
-        strip.background = element_blank(), strip.text.x = element_blank(), 
-        axis.text = element_blank(), axis.ticks = element_blank())
-  geom_text(data=coral_plot_labels, aes(label=Type), hjust="middle")
+  geom_point(size=1, shape=20) + 
+  stat_smooth(geom='line', method="lm", alpha=0.5, se=FALSE) +
+  scale_color_brewer(palette = "Dark2",
+                     name = "Metabolic Rate Type", 
+                     labels = c("Calcification",
+                                "Gross Photosynthesis",
+                                "Respiration")) +
+  labs(x="Activation Energy (eV)") + 
+  ylab(expression(paste("Rate (umol c", m^-2, " h", r^-1, ")"))) +
+  theme_article() +
+  theme(legend.position = "bottom", legend.justification = "left",
+        legend.margin = margin(0)) +
+  guides(color=guide_legend(title.position="top"))
 ```
 
-Bar Plot
+</div>
+:::
 
-```{r}
-plot_data <-sites %>% 
-  filter(parameter.measured %in% c("temp", "light"))
+### Good Bar Plot: 
 
-plot_labels <- plot_data %>% group_by(name) %>% summarise(values=mean(values))
+I made this extra plot. I think it accompanies the scater plot nicely. The bad plot was also attempting to show differences between the sites. Here it is much easier to determine how the activation energy and rate for each metabolic rate type vary between sites.
+
+::: {style="display: grid;  grid-template-columns: 1.3fr 0.7fr;  grid-column-gap: 10px"}
+<div>
+
+```{r good bar code, ref.label='good_bar', eval=FALSE, echo=TRUE}
+
 ```
 
-```{r}
+</div>
+
+<div>
+
+```{r good_bar, fig.cap="**Fig. 3:** Good Bar Plot", dev='png', eval=TRUE, echo=FALSE}
+coral_plot %>% group_by(Site, rate.type) %>% 
+  summarise(mean_AE=mean(Activation_Energy), 
+            mean_rate=mean(Rate)) %>% 
+  rename("bold(Activation~Energy~(eV))" = "mean_AE",
+         "bold(Rate~(umol~cm^-2~hr^-1))" = "mean_rate") %>%
+  pivot_longer(cols=c(3:4), 
+               names_to="Measurement", 
+               values_to="Values") %>%
+  ggplot(aes(x=Site, y=Values, fill=rate.type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(Measurement~., nrow=2, ncol=1, scales = "free_y",
+             labeller = label_parsed)+ 
+  theme_article() +
+  theme(axis.title.y = element_blank(), 
+        axis.text.x = element_text(size=8),
+        strip.background = element_rect(fill="white", 
+                                        color="white"),
+        strip.text = element_text(face="bold", size=10), 
+        legend.position="bottom", legend.justification="left",
+        legend.key.size = unit(5,"pt"), 
+        legend.margin = margin(0,0,0,0), 
+        legend.box.margin = margin(-10),
+        panel.grid.major.y = element_line(color="gray90",size=0.3))+ 
+  scale_fill_brewer(palette = "Dark2",
+                    name="Metabolic Rate Type", 
+                    labels = c("Calcification",
+                               "Gross Photosynthesis", 
+                               "Respiration")) +
+  guides(fill=guide_legend(title.position="top"))
+```
+
+</div>
+:::
+
+::: {.hidden}
+# unused code
+
+```{r, eval=FALSE}
 plot_data %>% 
   ggplot(aes(x=name, y=values)) +
   geom_bar(stat = "identity", aes(color=parameter.measured), 
@@ -288,10 +517,9 @@ plot_data %>%
         legend.text = element_text(color = "cyan"), 
         legend.spacing.x = unit(3, "lines"),
         legend.box.background = element_rect(color="aquamarine", size=0.5, fill="darkorchid"))
-
 ```
 
-```{r}
+```{r, eval=FALSE}
 plot_data %>% 
   ggplot(aes(x=name, y=values, fill=parameter.measured)) +
   geom_bar(position="dodge", stat = "identity") + 
@@ -299,3 +527,4 @@ plot_data %>%
   theme_bw() +
   theme(legend.position = "none")
 ```
+:::
