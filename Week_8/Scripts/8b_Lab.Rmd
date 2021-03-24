@@ -1,0 +1,62 @@
+---
+title: "8b Lab"
+output: html_notebook
+---
+
+Use any of the datasets that we have used in class and make two useful functions. One that is a plot and one that is not. Turn in your functions using RMarkdown with at least 2 examples each showing its flexibility. Due, as always, at 9am on Monday.
+
+# Libraries
+```{r}
+library(tidyverse)
+library(here)
+library(PNWColors)
+```
+
+# Data
+```{r}
+chem_data <- read_csv(here("Week_4", "Data", "chemicaldata_maunalua.csv"))
+
+data_dic <- read_csv(here("Week_4", "Data", "chem_data_dictionary.csv"))
+```
+
+
+# Function
+```{r}
+C_to_F <- function(temp_C) { 
+  temp_F <- temp_C * 9/5 + 32
+
+  return(temp_F)
+}
+```
+
+
+# Plot Function
+Practice plot
+```{r}
+chem_data %>% filter(complete.cases(.)) %>%
+ggplot(aes(x = Zone, y = C_to_F(Temp_in), color=Season))+
+  geom_jitter() +
+  geom_smooth(method = "lm") + 
+  scale_color_manual(values=pnw_palette("Lake",3, type = "discrete")) +
+  theme_classic()
+```
+
+Function
+```{r}
+Plot<-function(data, x, y, color){
+  data %>% filter(complete.cases(.)) %>%
+    ggplot(aes(x = {{x}}, y = {{y}} , color = {{color}}))+
+    geom_jitter() +
+    scale_color_manual(values=pnw_palette("Lake",3, type = "discrete")) +
+    theme_classic()
+}
+```
+
+
+# Plot
+```{r}
+Plot(chem_data, Zone, C_to_F(Temp_in), Season)
+```
+
+
+

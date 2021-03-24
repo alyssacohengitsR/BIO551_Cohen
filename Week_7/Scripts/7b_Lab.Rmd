@@ -20,25 +20,29 @@ knitr::opts_chunk$set(echo = TRUE,
 
 ::: {style="display: grid;  grid-template-columns: 1fr 1fr 1fr 1fr;  grid-column-gap: 10px;  grid-template-rows: 1fr 1fr; grid-row-gap: 10px"}
 ::: {style="display: grid; grid-column: 1/ span 2;  grid-row: 1/ span 1"}
-![](images/bad_plot-1-01.png)
+![](images/bad_plot-1.png)
 :::
 
 ::: {style="display: grid; grid-column: 3/ span 2;  grid-row: 1/ span 1"}
-![](images/good_scatter-1-03.png)
+![](images/good_scatter-1.png)
 :::
 
 ::: {style="display: grid; grid-column: 2/ span 2; grid-row: 2/ span 1"}
-![](images/good_bar-1-02.png)
+![](images/good_bar-1.png)
 :::
 :::
 
 ------------------------------------------------------------------------
 
-<center><font size="5">
-The Bad Plot
-</center></font>
+<center>
 
-![**Fig.1:** The Bad Plot](images/bad_plot-1-02.png "Fig. 1")
+<font size="5"> The Bad Plot
+
+</center>
+
+</font>
+
+![**Fig.1:** The Bad Plot](images/bad_plot-1.png "Fig. 1")
 
 \
 
@@ -56,11 +60,15 @@ The Bad Plot
 
 ------------------------------------------------------------------------
 
-<center><font size="5">
-The Good Plot
-</center></font>
+<center>
 
-![**Fig. 2:** Good Plot, Scatter](images/good_scatter-1-04.png)
+<font size="5"> The Good Plot
+
+</center>
+
+</font>
+
+![**Fig. 2:** Good Plot, Scatter](images/good_scatter-1.png)
 
 \
 
@@ -78,7 +86,7 @@ The Good Plot
 
 \
 
-![**Fig. 3:** Good Plot, Bar](images/good_bar-1-03.png)
+![**Fig. 3:** Good Plot, Bar](images/good_bar-1.png)
 
 \
 
@@ -227,35 +235,35 @@ This data was collected to test how nutrient loading and sedimentation affected 
 \
 <b>Table B:</b> Description of the Parameters Measured
 
-+------------------------+--------------------------------+-------------+
-| Code                   | Description                    | Unit        |
-+========================+================================+=============+
-| Light                  | proton flux density            |             |
-+------------------------+--------------------------------+-------------+
-| temp                   | Temperature                    | C           |
-+------------------------+--------------------------------+-------------+
-| NH4                    | ammonium                       | umol/L      |
-+------------------------+--------------------------------+-------------+
-| N.N                    | Nitrate + nitrite              | umol/l      |
-+------------------------+--------------------------------+-------------+
-| P                      | phosphate                      | umol/L      |
-+------------------------+--------------------------------+-------------+
-| DIN_DIP                | nitrogen to phosphorus ratio   | ratio       |
-+------------------------+--------------------------------+-------------+
-| N                      | tissue N in Sargassum          | \%          |
-+------------------------+--------------------------------+-------------+
-| trap.accumulation.rate | sedimentation rate             |             |
-+------------------------+--------------------------------+-------------+
-| CCA.cover              | crustose coralline algae cover | \%          |
-+------------------------+--------------------------------+-------------+
-| algal.cover            | fleshy algae cover             | \%          |
-+------------------------+--------------------------------+-------------+
-| p.acuta.cover          | *Pocillopora acuta* cover      | \%          |
-+------------------------+--------------------------------+-------------+
-| coral.cover            | coral cover                    | \%          |
-+------------------------+--------------------------------+-------------+
-| substrate.cover        | other substrate cover          | \%          |
-+------------------------+--------------------------------+-------------+
++------------------------+--------------------------------+------------+
+| Code                   | Description                    | Unit       |
++========================+================================+============+
+| Light                  | proton flux density            |            |
++------------------------+--------------------------------+------------+
+| temp                   | Temperature                    | C          |
++------------------------+--------------------------------+------------+
+| NH4                    | ammonium                       | umol/L     |
++------------------------+--------------------------------+------------+
+| N.N                    | Nitrate + nitrite              | umol/l     |
++------------------------+--------------------------------+------------+
+| P                      | phosphate                      | umol/L     |
++------------------------+--------------------------------+------------+
+| DIN_DIP                | nitrogen to phosphorus ratio   | ratio      |
++------------------------+--------------------------------+------------+
+| N                      | tissue N in Sargassum          | \%         |
++------------------------+--------------------------------+------------+
+| trap.accumulation.rate | sedimentation rate             |            |
++------------------------+--------------------------------+------------+
+| CCA.cover              | crustose coralline algae cover | \%         |
++------------------------+--------------------------------+------------+
+| algal.cover            | fleshy algae cover             | \%         |
++------------------------+--------------------------------+------------+
+| p.acuta.cover          | *Pocillopora acuta* cover      | \%         |
++------------------------+--------------------------------+------------+
+| coral.cover            | coral cover                    | \%         |
++------------------------+--------------------------------+------------+
+| substrate.cover        | other substrate cover          | \%         |
++------------------------+--------------------------------+------------+
 
 \
 \
@@ -332,7 +340,9 @@ coral_plot_labels$Rate <- c(1.5, 0.45, 0.9)
 <details>
 
 <summary>
+
 Table Code
+
 </summary>
 
 ```{r table 1 bad plot labels, echo=TRUE, eval=FALSE}
@@ -447,7 +457,7 @@ coral_plot %>%
 </div>
 :::
 
-### Good Bar Plot: 
+### Good Bar Plot:
 
 I made this extra plot. I think it accompanies the scater plot nicely. The bad plot was also attempting to show differences between the sites. Here it is much easier to determine how the activation energy and rate for each metabolic rate type vary between sites.
 
