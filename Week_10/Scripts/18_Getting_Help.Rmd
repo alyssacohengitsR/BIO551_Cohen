@@ -1,0 +1,107 @@
+---
+title: "18_Getting_Help"
+author: "Alyssa"
+date: "4/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Outline of Class
+
+Getting Help with R
+
+1. Troubleshooting
+
+2. Common Mistakes
+
+3. Reproducible examples {reprex}
+
+4. Copying and pasting {datapasta}
+
+Lab
+
+1. Make a Reprex
+
+# Libraries
+Make a reproducible example to ask for help
+```{r, eval = FALSE}
+install.packages('reprex') #reproducible example
+install.packages('datapasta') #copy and paste
+install.packages('styler') # copy and paste in style
+```
+
+# Making your first reprex
+
+Let's say you are trying to make a plot with the mpg dataset and you hit an error.
+```{r, error=TRUE}
+library(tidyverse)
+
+mpg %>%
+  ggplot(aes(x = displ, y = hwy))%>%
+  geom_point(aes(color = class))
+```
+
+
+**Go to Addins -> Render Reprex -> Paste to the program you want.  
+Make sure to "append session info"**
+
+
+# Using real data
+
+Often you are working with real data and run into an issue.  You need the example to be **reproducible** and simple.  Other people on the internet do not have your data so what should we do?  
+
+Open the *stars.csv* file and copy and paste the first few lines into R.
+
+
+# datapasta
+
+{datapasta} helps you copy and past snippets of your data in a reproducible way.  
+
+This time copy the code and got to Addins -> paste as tribble and then name it something.  
+
+```{r}
+data<-tibble::tribble(
+    ~lat,    ~long, ~star_no,
+  33.548, -117.805,      10L,
+  35.534, -121.083,       1L,
+  39.503, -123.743,      25L,
+  32.863,  -117.24,      22L,
+   33.46, -117.671,       8L,
+  33.548, -117.805,       3L
+  )
+
+
+data
+```
+
+You can now use this with {reprex} to make a reproducible example that can fully run with your own data and code. 
+
+# Do's and don't of reprex
+
+1. Use the smallest, simplest, most built-in data possible.
+  - e.g. using datapasta  
+  
+2. Include commands on a strict “need to run” basis.  
+  - Ruthlessly strip out anything unrelated to the specific matter at hand.  
+  - Include every single command that is required, e.g. loading specific packages  
+  
+3. Pack it in, pack it out, and don’t take liberties with other people’s computers. You are asking people to run this code!  
+  - Don’t start with rm(list = ls()). It is anti-social to clobber other people’s workspaces.  
+  - Don’t start with setwd("C:\Users\jenny\path\that\only\I\have"), because it won’t work on anyone else’s computer.  
+  - Don’t mask built-in functions, i.e. don’t define a new function named c or mean.  
+  - If you change options, store original values at the start, do your thing, then restore them.  
+  - If you create files, delete them when you’re done  
+  
+4. Use good coding style 
+
+
+
+The reprex code:  
+- Must run and, therefore, should be run by the person posting. No faking it.  
+- Should be easy for others to digest, so they don’t necessarily have to run it. You are encouraged to include selected bits of output.  
+- Should be easy for others to copy + paste + run, if and only if they so choose. Don’t let inclusion of output break executability.  
+
+.foot-note[https://reprex.tidyverse.org/articles/reprex-dos-and-donts.html]

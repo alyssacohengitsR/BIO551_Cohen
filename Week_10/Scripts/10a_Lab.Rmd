@@ -1,0 +1,50 @@
+---
+title: "10a_Lab"
+output: html_notebook
+---
+
+# Make a reproducible script with a bug
+```{r}
+library(tidyverse)
+library(maps)
+
+data <- tibble::tribble(
+    ~lat,    ~long, ~star_no,
+  33.548, -117.805,      10L,
+  35.534, -121.083,       1L,
+  39.503, -123.743,      25L,
+  32.863,  -117.24,      22L,
+   33.46, -117.671,       8L
+  )
+
+ggplot(data) +
+  geom_point(aes(x=long, y=lat, group=group))
+```
+
+
+# Fix someone else's
+**Shanelle's Group**
+```{r}
+library(tidyverse)
+data <- tibble::tribble(
+  ~lat,    ~long, ~star_no,
+  33.548, -117.805,      10L,
+  35.534, -121.083,       1L,
+  39.503, -123.743,      25L,
+  32.863,  -117.24,      22L,
+  33.46, -117.671,       8L,
+  33.548, -117.805,       3L
+)
+
+data %>% 
+  ggplot(aes(x = lat, y = long))+
+  geom_point(size = 2)+
+  geom_text(aes(label= star_no), size = 3,
+            nudge_x = 0.1, nudge_y = 0.2)+
+  theme_dark()+
+  labs(x = "Latitude", 
+       y = "Longitude")
+```
+
+
+
