@@ -433,8 +433,19 @@ cleaned_books %>%
   count(word, sort = TRUE) 
 ```
 
-How would we modify this code to count the most popular words by book? What about by each chapter within a book? 
+How would we modify this code to count the most popular words by book? 
+```{r}
+cleaned_books %>% 
+  group_by(book) %>%
+  count(word, sort = TRUE) 
+```
 
+What about by each chapter within a book? 
+```{r}
+cleaned_books %>% 
+  group_by(book, chapter) %>%
+  count(word, sort = TRUE) 
+```
 
 ## sentiment analysis
 
@@ -448,7 +459,6 @@ sent_word_counts <- tidy_books %>%
 head(sent_word_counts)
 ```
 
-
 Now, think about how we could do this with science? Instead of `get_sentiments()`, you could use an `inner_join` with a vector of keywords that you are searching for.  
 
 
@@ -456,7 +466,7 @@ Now, think about how we could do this with science? Instead of `get_sentiments()
 
 We can now use ggplot to visualize counts of positive and negative words in the books
 
-```{r, eval=FALSE}
+```{r}
 sent_word_counts %>%
   filter(n > 150) %>% # take only if there are over 150 instances of it
   mutate(n = ifelse(sentiment == "negative", -n, n)) %>% # add a column where if the word is negative make the count negative
@@ -464,19 +474,10 @@ sent_word_counts %>%
   ggplot(aes(word, n, fill = sentiment)) +
   geom_col() +
   coord_flip() +
-  labs(y = "Contribution to sentiment")
-```
-
-
-```{r, echo=FALSE}
-sent_word_counts %>%
-  filter(n > 150) %>% # take only if there are over 150 instances of it
-  mutate(n = ifelse(sentiment == "negative", -n, n)) %>% # add a column where if the word is negative make the count negative
-  mutate(word = reorder(word, n)) %>% # sort it so it gows from largest to smallest
-  ggplot(aes(word, n, fill = sentiment)) +
-  geom_col() +
-  coord_flip() +
-  labs(y = "Contribution to sentiment")
+  labs(y = "Contribution to sentiment") +
+  theme_bw() + 
+  theme(legend.key.size = unit(5, "pt"), legend.position = c(0.9,0.1),
+        axis.title.y = element_blank(), axis.title.x = element_text(size=10))
 ```
 
 
