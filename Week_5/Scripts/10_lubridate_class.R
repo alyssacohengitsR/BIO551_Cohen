@@ -74,9 +74,9 @@ dmy("24/02/2021")
 ##  02/24/2021 22:22:20	        | mdy_hms()
 ##  February 24 2021 10:22 PM   | mdy_hm()
 
-##  y = hour
-##  m = minute (1st m)
-##  d = second
+##  y = year
+##  m = month
+##  d = day
 ##  h = hour
 ##  m = minute (2nd m)
 ##  s = second

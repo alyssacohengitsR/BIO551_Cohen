@@ -1,7 +1,7 @@
 # 8_Intro_to_tidyr --------------------------------------
 # Created by: Alyssa Cohen 
 # Created on: 2021-02-17 
------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Load Libraries ----
 library(tidyverse)

@@ -1,0 +1,353 @@
+---
+title: "19_Shiny"
+output: html_notebook
+---
+
+# Libraries
+```{r}
+library(tidyverse)
+```
+
+# Outline
+
+# Shiny Basics
+
+-   shiny links code and a website
+
+-   reactivity: when the website user does something and the code gives the result
+
+-   shiny is useful for
+
+    -   teaching a package {learnR}
+
+    -   showing data vis to non-experts
+
+        -   stakeholders
+
+        -   students
+
+    -   streamlining code intensive things
+
+        -   database queries
+
+        -   visualizing bulky simulation outputs
+
+## Starting a new Shiny app
+
+```{r, eval=FALSE, tidy=FALSE}
+install.packages("shiny")
+```
+
+From The RStudio IDE, pick `New File -> Shiny Web App`
+
+You can choose between single (**app.R**) or multiple files (**ui.R** and **server.R**)\
+-\> does NOT matter which
+
+## two components
+
+**ui:** dictates the apperance of the app
+
+-   writes HTML
+-   for something to appear in your app it goes in here
+
+**server:** function that contains rendering expressions
+
+The server function and UI object are passed to the `shinyApp()` function to create a Shiny app object.
+
+## ui.R/server.R
+
+### ui.R
+
+#### The ui 
+
+Looks like this:
+
+```{r eval=FALSE}
+ui <- fluidPage(
+    titlePanel("Old Faithful Geyser Data"),
+    sidebarLayout(
+        sidebarPanel(
+*            sliderInput("bins",
+                        "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)),
+        mainPanel(
+*           plotOutput("distPlot"))
+    )
+)
+```
+
+The corresponding ui looks like this:
+
+![basicui](images/basicui.png)
+
+ui code contains:
+
+1.  UI type - `fluidPage()` puts elements in rows that can include columns - `navbarPage()` has a navigation bar
+
+2.  layout elements (`sidebarLayout()` , etc.)
+
+3.  Theme information (e.g., `{shinythemes}`)
+
+4.  Output objects (`plotOutput()`, etc.)
+
+5.  Input objects (`sliderInput()`,`fileInput()` etc.) - also called "[widgets](%5Bhttps://shiny.rstudio.com/gallery/widget-gallery.html)"](<https://shiny.rstudio.com/gallery/widget-gallery.html>)")
+
+*Input objects link the user interface to the R code on the server.*
+
+### server.R
+
+The server builds a list-like object called `output`. The contents of `output` are displayed in the ui.
+
+```{r, eval=FALSE, message=FALSE}
+server <- function(input, output) {
+
+    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    })
+}
+```
+
+here is how they are linked:
+
+::: {#unique_div_id}
+```{=html}
+<style>#unique_div_id a[data-line-number="7"]{background-color: yellow;}
+</style>
+<style>#unique_div_id a[data-line-number="17"]{background-color: yellow;}
+</style>
+```
+```{r, eval=FALSE, message=FALSE}
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("Old Faithful Geyser Data"),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+            sliderInput("bins",
+                        "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+           plotOutput("distPlot")
+        )
+    )
+)
+```
+:::
+
+### ui.R & server.R
+
+The server builds a list-like object called `output`. The contents of `output` are displayed in the ui. Here is how they are linked:
+
+```{r eval= FALSE}
+server <- function(input, output) {
+*    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    })
+}
+```
+
+```{r eval=FALSE}
+ui <- fluidPage(
+    titlePanel("Old Faithful Geyser Data"),
+    sidebarLayout(
+        sidebarPanel(
+            sliderInput("bins",
+                        "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)),
+        mainPanel(
+*           plotOutput("distPlot"))
+    )
+)
+```
+
+-   **rendering functions**: 'renderPlot()', 'renderTable()', etc.
+
+    -   build a new object to display every time the inputs change
+
+-   **reactive expressions**
+
+    -   'reactive()' caches reactive objects so you can access them later in the server logic
+    -   'eventReactive()' creates reactive objects but only when a specific input changes
+    -   lazy
+
+-   
+
+    ## **Observe expressions**
+
+## 01_basics app.R
+
+# leaflet
+Interactive maps with `leaflet` in Shiny
+
+```{r, eval=FALSE, message=FALSE}
+install.packages("leaflet")
+```
+
+```{r}
+library(leaflet)
+```
+
+
+## Maps in Shiny with leaflet
+
+- Leaflet is an open-source JavaScript library that makes interactive maps.
+
+- It's *very cool*! And the `leaflet` R package integrates well with Markdown files and Shiny apps so you can show spatial data.
+
+- It gets fancy very fast. [Here](https://rstudio.github.io/leaflet/) is the guide for using `leaflet` in R and integrating it with Shiny.
+
+
+
+## 02_maps/app.R
+
+install mack data set package
+```{r, eval=FALSE}
+install.packages("gamair")
+```
+
+```{r}
+library(gamair)
+library(RColorBrewer)
+```
+
+
+Here is how you would make the plot in a regular R file:
+```{r, eval=FALSE}
+leaflet(data = mack) %>%
+      addTiles() %>%
+      addCircleMarkers(
+        ~lon,~lat,
+        radius = ~egg.dens/30,
+        color = ~colorNumeric(RColorBrewer::brewer.pal(6,name = "YlOrRd"), mack$salinity),
+        stroke = FALSE,
+        fillOpacity = 0.5
+      ) %>%
+      addProviderTiles("Esri.WorldImagery")
+```
+
+
+
+
+
+
+
+# dashboards
+
+Dashboards with `shinydashboard`
+\ 
+another way to use Shiny  
+\
+
+**Why make a dashboard?**
+
+To show a dataset several ways in one place (and automatically update it!)
+Use it for:
+
+- communicating data in a polished way
+
+- offering access to visualizations from a database
+
+- showing a "data story" in a linear way
+
+![confdash](img/confdash.png)
+
+## Making a shiny dashboard
+
+- Shiny dashboards are just like Shiny apps, so you start them the same way you would a basic Shiny app
+
+- In RStudio:
+> File --> New File --> Shiny Web App
+
+- Load the following packages:
+```{r eval=FALSE}
+library(tidyverse)
+library(shiny)
+library(shinydashboard)
+```
+
+## Anatomy of a dashboard
+
+- a `dashboardPage` requires three components: a header, a sidebar, and a body.
+```{r eval=FALSE}
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(),
+  dashboardBody()
+)
+```
+
+
+- You can populate these with shiny-esque items (e.g., `PlotOutput`) or items unique to `shinydashboard`
+
+
+## Special widgets for dashboards
+
+### sidebar and header
+
+- Dashboards have lots of fun menus
+
+  - Notification menus (containing `notificationItem()` s)
+  
+  - Task menus (containing `taskItem()` s)
+  
+  - Sidebar menus (containing `menuItem()`s)
+
+### body
+
+- There are also some fun body contents
+
+  - `tabBox`
+  
+  - `infoBox`
+  
+  - `valueBox`
+  
+  
+## 03_dashboards/app.R
+
+# **More Shiny resources:**
+
+[Mastering Shiny](https://mastering-shiny.org/) by Hadley Thee Wickham 
+
+Colin Fay has several [talks](https://colinfay.me/talks-publications/) on Shiny app workflow and production
+
+We love a [cheatsheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf)
+
+# Some of Margaret Siple's Shiny apps
+
+The [Marine Mammal Bycatch Impacts Exploration Tool](https://msiple.shinyapps.io/mammaltool/)
+
+[Novel-gazing](https://msiple.shinyapps.io/NovelGazingApp/) (for Goodreads users) 
+
+[Adopt Don't Shop](https://nsilbiger.shinyapps.io/AdoptDontShop/) (collaboration with Nyssa Silbiger)
+
+# Deploying your Shiny app
+
+## Deploy to the cloud
+- Sign up for a free shinyapps.io account
+
+- Install `{rsconnect}` 
+
+- Configure `rsconnect` to use your account using a token from your shinyapps.io account:
+
+![shinyappsio](img/shinyappsio.png)

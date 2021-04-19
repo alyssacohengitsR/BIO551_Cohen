@@ -1,7 +1,7 @@
 ### First script in class about importing data #########
 ### Created by: Alyssa Cohen
 ### Created on: 2021-02-03
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 ### Load Libraries ########
