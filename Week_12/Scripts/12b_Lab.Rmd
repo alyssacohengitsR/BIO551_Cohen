@@ -1,0 +1,116 @@
+---
+title: "12b_Lab"
+author: "Alyssa"
+date: "4/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+```
+
+
+# Lab Outline
+
+Working with intertidal data. Today you will need to use skills that you have learned in working with words to 
+
+-   clean up some issues with the character data 
+-   and use what you learned today to reorder your factors into orders that make sense.  
+-   (Also the column headers could be better...)
+\
+
+**Goal:** 
+
+-   make a plot
+-   one of the axes is a factor.  
+-   Save everything in the appropriate folders.
+
+Data:
+You have two possible files to play with in the data folder (you don't HAVE to use both): 
+
+1.    intertidaldata.csv 
+2.    intertidaldata_latitude.csv 
+
+(as well as a data dictionary - intertidal_data_dictionary.csv)
+\
+**Importantly**- if you decide to visualize anything by _tide height_ it should go from low to mid to high tide.   
+\
+Due Monday, 9am.
+
+
+# Libraries
+```{r}
+library(tidyverse)
+library(here)
+library(flextable)
+library(ggridges)
+```
+
+
+# Data
+```{r}
+data_dictionary <- read_csv(here("Week_12", "Data", "intertidal_data_dictionary.csv"))
+data_dictionary %>%
+  flextable() %>% 
+  theme_booktabs() %>%
+  autofit()
+```
+
+
+```{r}
+tides <- read_csv(here("Week_12", "Data", "intertidaldata.csv"))
+
+lat <- read_csv(here("Week_12", "Data", "intertidaldata_latitude.csv"))
+```
+
+
+# clean up the data
+
+only looking at the invertebrates 
+```{r}
+inverts <- tides %>% select(c(1:3, 11:13)) %>% 
+  transform(Quadrat = str_replace_all(Quadrat, "\\.|[0-9]", "")) %>%
+  mutate(Quadrat = str_trim(Quadrat), 
+         Quadrat = factor(Quadrat, levels = c("Low", "Mid", "High"))) %>%
+  rename("Whelks" = "Whelks..Counts.", 
+         "Crabs" = "Crabs..Counts.", 
+         "Sea Stars" = "Stars..Counts.") %>%
+  pivot_longer(cols = c(4:6), 
+               names_to = "Invertebrates", 
+               values_to = "Count")
+
+unique(inverts$Quadrat)  
+```
+
+
+# Plot
+```{r}
+inverts %>% 
+  filter(Invertebrates == "Crabs", # only grabs
+         Count != 0) %>% # remove 0s
+  left_join(lat) %>%  # add in latitude to organize
+  ggplot(aes(x=Count, 
+             y=fct_reorder(Site, Latitude),
+             fill=Invertebrates, 
+             label= as.character(Latitude))) +
+  geom_density_ridges(alpha=0.7) +
+  scale_x_continuous(limits = c(0,5.5), 
+                     expand = c(0,0)) + 
+  labs(y="Site", title="Crabs Found at Each Site") +
+  geom_text(aes(label=Latitude, x=5, y=Site), # add latitude labels
+            size=2, face="plain", color="gray30") +
+  coord_cartesian(clip = "off") + 
+  annotate("text", label="Latitude", x=5.5, y=6.7, angle=-90, hjust=0.5) + # add title on right
+  theme_classic() +
+  theme(legend.position = "none", 
+        panel.grid.major.y = element_line(), 
+        plot.margin = unit(c(1,2,1,1), "lines"), 
+        plot.title.position = "plot") +
+  ggsave(here("Week_12", "Outputs", "Crabs_12b.png"))
+```
+
+
+
+
